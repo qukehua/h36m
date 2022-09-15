@@ -19,5 +19,5 @@ parser.add_argument('--val_root', default='data/test20_npy/', type=str)
 parser.add_argument('--val_batch_size', default=8, type=int)
 parser.add_argument('--joints_total', default=32, type=int)
 parser.add_argument('--tb_log_dir', default='tflog', type=str)
-parser.add_argument('--log_name', default='log/8.27.1.txt', type=str)
+parser.add_argument('--log_name', default='log/9.15.1.txt', type=str)
 
