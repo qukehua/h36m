@@ -119,7 +119,7 @@ def train(model, train_dataloader, epoch):
                 file.write(str(mpjpe_train[0][i]) + '\n')
 
             state = {'epoch': epoch + 1,
-                      'lr': lr,
+                      'lr': args.lr,
                       'state_dict': model.state_dict(),
                       'optimizer': optimizer.state_dict()}
             torch.save(state,
@@ -197,16 +197,19 @@ if __name__ == '__main__':
     epochs = args.epochs
 
     save_model_root = './save_model/'
-   # model_pretrained = save_model_root + '09-10-22_39-4.pth'
-   # epoch_pretrained = os.path.splitext(model_pretrained)
-   # print(epoch_pretrained)
-   # epoch_pretrained = epoch_pretrained[0].split('-')[3]
-   # print(epoch_pretrained)
-   # epoch_pretrained = int(epoch_pretrained)
-  #  print(epoch_pretrained)
+    model_pretrained = save_model_root + '09-15-15_23-0.pth'
+    epoch_pretrained = os.path.splitext(model_pretrained)
+    print(epoch_pretrained)
+    epoch_pretrained = epoch_pretrained[0].split('-')[3]
+    print(epoch_pretrained)
+    epoch_pretrained = int(epoch_pretrained)
+    print(epoch_pretrained)
     # epoch_pretrained = 0
     #state_dict = torch.load(model_pretrained, map_location=torch.device(device))
-  #  model.load_state_dict(torch.load(model_pretrained)['shared_layers'])
+    model = torch.nn.DataParallel(model)
+    cudnn.benchmark = True
+    model.load_state_dict(torch.load(model_pretrained)['state_dict'])
+   # optimizer.load_state_dict(torch.load(model_pretrained)['optimizer'])
 
     #model.load_state_dict(state_dict["shared_layers"],strict=False)
     #print(model.state_dict()['TB_foward_0.0.weight'])
@@ -215,11 +218,11 @@ if __name__ == '__main__':
     for epoch in range(epochs):
         train(model, train_dataloader, epoch)
         if epoch % 1 == 0:
-           save_state = {'shared_layers': model.state_dict()}
-           #state = {'epoch': epoch + 1,
-                 #   'lr': lr,
-                  #  'state_dict': model.state_dict(),
-                  #  'optimizer': optimizer.state_dict()}
+          # save_state = {'shared_layers': model.state_dict()}
+           state = {'epoch': epoch + 1,
+                  'lr': args.lr,
+                  'state_dict': model.state_dict(),
+                  'optimizer': optimizer.state_dict()}
            torch.save(save_state,
                        save_model_root + strftime("%m-%d-%H_%M-", localtime()) + str(epoch + epoch_pretrained) + '.pth')
            print('model saving done!')
