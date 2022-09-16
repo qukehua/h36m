@@ -194,6 +194,7 @@ if __name__ == '__main__':
         h36m_dataloader(data_path=args.train_data_path, input_len=args.input_len, seq_len=args.seq_len),
         batch_size=args.batch_size, num_workers=1, pin_memory=True, shuffle=True)
     model = TrajectoryNet().to(device)
+    model = torch.nn.DataParallel(model).to(device)
     epochs = args.epochs
 
     save_model_root = './save_model/'
@@ -205,15 +206,15 @@ if __name__ == '__main__':
     epoch_pretrained = int(epoch_pretrained)
     print(epoch_pretrained)
     # epoch_pretrained = 0
-    #state_dict = torch.load(model_pretrained, map_location=torch.device(device))
-    model = torch.nn.DataParallel(model)
-    cudnn.benchmark = True
-    model.load_state_dict(torch.load(model_pretrained)['state_dict'])
+    state_dict = torch.load(model_pretrained, map_location=torch.device(device))
+    #print(state_dict)
+    #model.load_state_dict(torch.load(model_pretrained)['state_dict'])
    # optimizer.load_state_dict(torch.load(model_pretrained)['optimizer'])
 
-    #model.load_state_dict(state_dict["shared_layers"],strict=False)
-    #print(model.state_dict()['TB_foward_0.0.weight'])
-    model = torch.nn.DataParallel(model).to(device)
+    model.load_state_dict(state_dict["state_dict"])
+
+   # print(model.state_dict()['TB_foward_0.0.weight'])
+   # model = torch.nn.DataParallel(model).to(device)
 
     for epoch in range(epochs):
         train(model, train_dataloader, epoch)
