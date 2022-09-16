@@ -118,12 +118,7 @@ def train(model, train_dataloader, epoch):
                 print(mpjpe_train[0][i])
                 file.write(str(mpjpe_train[0][i]) + '\n')
 
-            state = {'epoch': epoch + 1,
-                      'lr': args.lr,
-                      'state_dict': model.state_dict(),
-                      'optimizer': optimizer.state_dict()}
-            torch.save(state,
-                       save_model_root + strftime("%m-%d-%H_%M-", localtime()) + str(epoch + epoch_pretrained) + '.pth')
+
 
             file.close()
 
@@ -198,7 +193,7 @@ if __name__ == '__main__':
     epochs = args.epochs
 
     save_model_root = './save_model/'
-    model_pretrained = save_model_root + '09-15-15_23-0.pth'
+    model_pretrained = save_model_root + '09-10-22_39-4.pth'
     epoch_pretrained = os.path.splitext(model_pretrained)
     print(epoch_pretrained)
     epoch_pretrained = epoch_pretrained[0].split('-')[3]
@@ -211,7 +206,7 @@ if __name__ == '__main__':
     #model.load_state_dict(torch.load(model_pretrained)['state_dict'])
    # optimizer.load_state_dict(torch.load(model_pretrained)['optimizer'])
 
-    model.load_state_dict(state_dict["state_dict"])
+    model.load_state_dict(state_dict["shared_layers"])
 
    # print(model.state_dict()['TB_foward_0.0.weight'])
    # model = torch.nn.DataParallel(model).to(device)
@@ -224,7 +219,7 @@ if __name__ == '__main__':
                   'lr': args.lr,
                   'state_dict': model.state_dict(),
                   'optimizer': optimizer.state_dict()}
-           torch.save(save_state,
+           torch.save(state,
                        save_model_root + strftime("%m-%d-%H_%M-", localtime()) + str(epoch + epoch_pretrained) + '.pth')
            print('model saving done!')
     #save_state_end = {'shared_layers': model.state_dict()}
